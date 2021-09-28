@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -11,7 +12,7 @@ public class MainWindow {
     private JButton processButton;
     private JButton saveButton;
     private JTextArea userInputOutput;
-    private JButton button2;
+    private JButton loadTxtButton;
     private JButton button4;
     private JButton button5;
 
@@ -111,6 +112,31 @@ public class MainWindow {
 
                 // Deactivate text area, so user cannot enter text.  This is now read only.
                 userInputOutput.setEnabled(false);
+            }
+        });
+        loadTxtButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //Create a JFileChooser object
+                JFileChooser loadFile = new JFileChooser();
+                // Set filter to only allow txt files to be loaded (can be expanded in the future)
+                FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text Files","txt");
+                // Set filter on FileChooser object
+                loadFile.setFileFilter(txtFilter);
+
+                //Create value to hold return variable of open dialog box to compare
+                int validReturn = loadFile.showOpenDialog(null);
+
+                if(validReturn == JFileChooser.APPROVE_OPTION){
+
+                    //TODO Add loading of file to CryptKey variable
+
+                    JOptionPane.showMessageDialog(new JFrame(),
+                            "Load Successful");
+
+
+                }
+
             }
         });
     }
