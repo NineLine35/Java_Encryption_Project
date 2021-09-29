@@ -2,7 +2,12 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class MainWindow {
     private JPanel MainWindow;
@@ -13,7 +18,7 @@ public class MainWindow {
     private JButton saveButton;
     private JTextArea userInputOutput;
     private JButton loadTxtButton;
-    private JButton button4;
+    private JButton loadKeyButton;
     private JButton button5;
 
     public MainWindow() {
@@ -98,6 +103,9 @@ public class MainWindow {
 
                 // Enable text area if previously disabled
                 userInputOutput.setEnabled(true);
+
+                // Disable load text and load key buttons (these are used only for decryption)
+                loadTxtButton.setEnabled(false);
             }
         });
         decryptRadio.addActionListener(new ActionListener() {
@@ -112,6 +120,9 @@ public class MainWindow {
 
                 // Deactivate text area, so user cannot enter text.  This is now read only.
                 userInputOutput.setEnabled(false);
+
+                // Enable the load text and load key buttons
+                loadTxtButton.setEnabled(true);
             }
         });
         loadTxtButton.addActionListener(new ActionListener() {
@@ -129,10 +140,93 @@ public class MainWindow {
 
                 if(validReturn == JFileChooser.APPROVE_OPTION){
 
-                    //TODO Add loading of file to CryptKey variable
+                    //Variable to hold the file selected by the user
+                    File selectedFile = loadFile.getSelectedFile();
+
+                    //Create a variable to hold the output from the text loading
+                    String encryptText = null;
+
+                    //Create a scanner object to read the file
+                    try {
+                        Scanner reader = new Scanner(selectedFile);
+
+                        // Read the text from the file into a variable
+                        while(reader.hasNextLine()){
+                            encryptText = reader.nextLine();
+                        }
+
+                        reader.close();
+
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(new JFrame(),
+                                "Error reading file");
+                    }
+
+                    // Set UserOutput variable to encryptText value
+                    op.setUserEncryptOut(encryptText);
+
+                    // Write text onto JTextArea
+                    userInputOutput.setText(encryptText);
+
 
                     JOptionPane.showMessageDialog(new JFrame(),
                             "Load Successful");
+
+
+                }
+
+            }
+        });
+        loadKeyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                //Create a JFileChooser object
+                JFileChooser loadFile = new JFileChooser();
+                // Set filter to only allow txt files to be loaded (can be expanded in the future)
+                FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text Files","txt");
+                // Set filter on FileChooser object
+                loadFile.setFileFilter(txtFilter);
+
+                //Create value to hold return variable of open dialog box to compare
+                int validReturn = loadFile.showOpenDialog(null);
+
+
+
+                if(validReturn == JFileChooser.APPROVE_OPTION){
+                    //Variable to hold the file selected by the user
+                    File selectedFile = loadFile.getSelectedFile();
+
+                    /* Create an arraylist variable to hold the output from the text loading
+                    Using an arraylist as the system will not know the number of ints in the
+                    key file at loading.  This makes it hard to set an array length.
+                    The arraylist can dynamically grow during the reading of the file.*/
+                    List<Integer> encryptKey = new ArrayList<>();
+
+                    //TODO Need to bring file in as a string and pull the int out into an array
+
+                    try {
+                        Scanner reader = new Scanner(selectedFile);
+
+                        while(reader.hasNextLine()){
+                            if(reader.hasNextInt()){
+                                encryptKey.add(reader.nextInt());
+                            }
+                            else{
+                                reader.next();
+                            }
+                        }
+
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(new JFrame(),
+                                "Error reading file");
+                    }
+
+
+
+
 
 
                 }
@@ -147,5 +241,7 @@ public class MainWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+        //Center the JFrame
+        frame.setLocationRelativeTo(null);
     }
 }

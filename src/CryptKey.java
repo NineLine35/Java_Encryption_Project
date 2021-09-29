@@ -62,7 +62,7 @@ public class CryptKey {
             return encryptFinal = new String(cryptText);
         }
 
-        //TODO Create a decrypting method
+
         public String decrypt(String text, int[] key){
 
             //Array to hold unencrypted text
