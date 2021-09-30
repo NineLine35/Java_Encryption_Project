@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,47 +34,59 @@ public class MainWindow {
                 boolean isDecryptRadioSelected = decryptRadio.isSelected();
 
                 if (isEncryptRadioSelected) {
-                    // Pull user text from GUI text area
-                    String userInput = userInputOutput.getText();
 
-                    // Create an output String variable for the encrypted text
-                    String output;
+                        if(userInputOutput.getText().isEmpty())
+                        {
+                            JOptionPane.showMessageDialog(new JFrame(),
+                                    "Text field blank");
+                        }
+                        else
+                        {
+                            // Pull user text from GUI text area
+                            String userInput = userInputOutput.getText();
 
-                    //Create a CryptKey object
-                    CryptKey scramble = new CryptKey();
+                            // Create an output String variable for the encrypted text
+                            String output;
 
-                    //Create a key
-                    int[] key = scramble.keyBuilder(userInput);
+                            //Create a CryptKey object
+                            CryptKey scramble = new CryptKey();
 
-                    // Set key in UserOutput
-                    op.setUserEncryptKey(key);
+                            //Create a key
+                            int[] key = scramble.keyBuilder(userInput);
 
-                    //Encrypt the user text
-                    output = scramble.encrypt(userInput, key);
+                            // Set key in UserOutput
+                            op.setUserEncryptKey(key);
 
-                    // Set encrypted text in UserOutput
-                    op.setUserEncryptOut(output);
+                            //Encrypt the user text
+                            output = scramble.encrypt(userInput, key);
 
-                    // Clear the text area and return the encrypted text
-                    userInputOutput.selectAll();
-                    userInputOutput.replaceSelection("");
-                    userInputOutput.setText(output);
+                            // Set encrypted text in UserOutput
+                            op.setUserEncryptOut(output);
 
+                            // Clear the text area and return the encrypted text
+                            userInputOutput.selectAll();
+                            userInputOutput.replaceSelection("");
+                            userInputOutput.setText(output);
+
+                        }
+
+                    //TODO Decrypt - Add a way to have the user select txt files from system
+                    if(isDecryptRadioSelected){
+                        String encryptTxt = op.getUserEncryptOut();
+                        int[] key = op.getUserEncryptKey();
+
+                        //Create a CryptKey object
+                        CryptKey unscramble = new CryptKey();
+
+                        String output = unscramble.decrypt(encryptTxt,key);
+
+                        userInputOutput.setText(output);
+
+                    }
                 }
 
-                //TODO Decrypt - Add a way to have the user select txt files from system
-                if(isDecryptRadioSelected){
-                    String encryptTxt = op.getUserEncryptOut();
-                    int[] key = op.getUserEncryptKey();
 
-                    //Create a CryptKey object
-                    CryptKey unscramble = new CryptKey();
 
-                    String output = unscramble.decrypt(encryptTxt,key);
-
-                    userInputOutput.setText(output);
-
-                }
             }
         });
         saveButton.addActionListener(new ActionListener() {
@@ -83,9 +96,11 @@ public class MainWindow {
                     // Run UserOutput "Save" method
                     op.Save();
 
-                    // Clear text area
+                    // Clear text area and remove values in EncryptOut & EncryptKey
                     userInputOutput.selectAll();
                     userInputOutput.replaceSelection("");
+                    op.setUserEncryptOut(null);
+                    op.setUserEncryptKey(null);
 
                 } catch (NullPointerException | IOException ex) {
                     ex.printStackTrace();
@@ -106,6 +121,7 @@ public class MainWindow {
 
                 // Disable load text and load key buttons (these are used only for decryption)
                 loadTxtButton.setEnabled(false);
+                loadKeyButton.setEnabled(false);
             }
         });
         decryptRadio.addActionListener(new ActionListener() {
@@ -123,6 +139,7 @@ public class MainWindow {
 
                 // Enable the load text and load key buttons
                 loadTxtButton.setEnabled(true);
+                loadKeyButton.setEnabled(true);
             }
         });
         loadTxtButton.addActionListener(new ActionListener() {
@@ -198,11 +215,8 @@ public class MainWindow {
                     //Variable to hold the file selected by the user
                     File selectedFile = loadFile.getSelectedFile();
 
-                    /* Create an arraylist variable to hold the output from the text loading
-                    Using an arraylist as the system will not know the number of ints in the
-                    key file at loading.  This makes it hard to set an array length.
-                    The arraylist can dynamically grow during the reading of the file.*/
-                    List<Integer> encryptKey = new ArrayList<>();
+                    // Create a string variable to hold the key string
+                    String encryptKey = null;
 
                     //TODO Need to bring file in as a string and pull the int out into an array
 
@@ -210,13 +224,11 @@ public class MainWindow {
                         Scanner reader = new Scanner(selectedFile);
 
                         while(reader.hasNextLine()){
-                            if(reader.hasNextInt()){
-                                encryptKey.add(reader.nextInt());
-                            }
-                            else{
-                                reader.next();
-                            }
+
+                            encryptKey = reader.nextLine();
                         }
+
+                        reader.close();
 
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
@@ -224,9 +236,23 @@ public class MainWindow {
                                 "Error reading file");
                     }
 
+                    // Code to remove the brackets from the key string and pull values from string array
+                    // to an int array.  This is required for the decrypt method.
+
+                    encryptKey = encryptKey.replaceAll("\\s","");
 
 
+                    String[] rmvBrackets = encryptKey.substring(1,encryptKey.length() -1).split(",");
 
+                    int[] finalKey = new int[rmvBrackets.length];
+
+                    for(int x=0; x < rmvBrackets.length; x++)
+                    {
+                        finalKey[x] = Integer.valueOf(rmvBrackets[x]);
+                    }
+
+                    // Set finalKey variable to encryptKey value
+                    op.setUserEncryptKey(finalKey);
 
 
                 }

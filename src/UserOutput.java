@@ -21,7 +21,7 @@ public class UserOutput {
             directory.mkdir();
         }
 
-        //Create text file to hold encrypted text
+        // Create text file to hold encrypted text
         File encryptTxt = new File("C:\\JavaTest\\encryptTXT.txt");
         encryptTxt.createNewFile();
 
@@ -42,7 +42,7 @@ public class UserOutput {
                     "Could not write text to file");
         }
 
-        //Write key to keyTXT file
+        // Write key to keyTXT file
         FileWriter keyWrite = new FileWriter("C:\\JavaTest\\keyTXT.txt");
         try{
             keyWrite.write(Arrays.toString(userEncryptKey));
