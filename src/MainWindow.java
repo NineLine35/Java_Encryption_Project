@@ -21,6 +21,7 @@ public class MainWindow {
     private JButton loadTxtButton;
     private JButton loadKeyButton;
     private JButton button5;
+    private JButton decryptButton;
 
     public MainWindow() {
         // Create a UserOutput object to store encrypted strings and keys
@@ -30,11 +31,7 @@ public class MainWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                boolean isEncryptRadioSelected = encryptRadio.isSelected();
-                boolean isDecryptRadioSelected = decryptRadio.isSelected();
-
-                if (isEncryptRadioSelected) {
-
+                        // Encrypt process
                         if(userInputOutput.getText().isEmpty())
                         {
                             JOptionPane.showMessageDialog(new JFrame(),
@@ -70,25 +67,10 @@ public class MainWindow {
 
                         }
 
-                    //TODO Decrypt - Add a way to have the user select txt files from system
-                    if(isDecryptRadioSelected){
-                        String encryptTxt = op.getUserEncryptOut();
-                        int[] key = op.getUserEncryptKey();
-
-                        //Create a CryptKey object
-                        CryptKey unscramble = new CryptKey();
-
-                        String output = unscramble.decrypt(encryptTxt,key);
-
-                        userInputOutput.setText(output);
-
-                    }
                 }
 
-
-
-            }
         });
+
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -140,6 +122,8 @@ public class MainWindow {
                 // Enable the load text and load key buttons
                 loadTxtButton.setEnabled(true);
                 loadKeyButton.setEnabled(true);
+
+                saveButton.setEnabled(false);
             }
         });
         loadTxtButton.addActionListener(new ActionListener() {
@@ -254,8 +238,30 @@ public class MainWindow {
                     // Set finalKey variable to encryptKey value
                     op.setUserEncryptKey(finalKey);
 
+                    // Confirmation of successful load
+                    JOptionPane.showMessageDialog(new JFrame(),
+                            "Load Successful");
+
 
                 }
+
+            }
+        });
+
+        // Button to process a decryption of the loaded txt and key files
+        decryptButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String encryptTxt = op.getUserEncryptOut();
+                int[] key = op.getUserEncryptKey();
+
+                //Create a CryptKey object
+                CryptKey unscramble = new CryptKey();
+
+                String output = unscramble.decrypt(encryptTxt,key);
+
+                userInputOutput.setText(output);
 
             }
         });

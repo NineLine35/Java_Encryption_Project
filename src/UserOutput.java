@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -11,9 +12,14 @@ public class UserOutput {
     private String userEncryptOut;
     private int[] userEncryptKey;
 
+    // Variable to bring in Data object in order to timestamp output files
+    Date date = new Date();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd.HH-mm");
+    String timeStamp = dateFormat.format(date);
+
     public void Save() throws IOException {
         // Create a File object to be used to create directory
-        String path = "C:\\JavaTest";
+        String path = "C:\\JavaEncrypt";
         File directory = new File(path);
 
         // Check if directory exists, if so do not create a new one and overwrite
@@ -22,15 +28,15 @@ public class UserOutput {
         }
 
         // Create text file to hold encrypted text
-        File encryptTxt = new File("C:\\JavaTest\\encryptTXT.txt");
+        File encryptTxt = new File("C:\\JavaEncrypt\\encryptTXT_" + timeStamp +".txt");
         encryptTxt.createNewFile();
 
         //Create text file to hold key
-        File keyTxt = new File("C:\\JavaTest\\keyTXT.txt");
+        File keyTxt = new File("C:\\JavaEncrypt\\keyTXT_" + timeStamp + ".txt");
         keyTxt.createNewFile();
 
         //Write encrypted text to encryptTXT file
-        FileWriter txtWrite = new FileWriter("C:\\JavaTest\\encryptTXT.txt");
+        FileWriter txtWrite = new FileWriter("C:\\JavaEncrypt\\encryptTXT_" + timeStamp +".txt");
         try{
             txtWrite.write(userEncryptOut);
             txtWrite.close();
@@ -43,7 +49,7 @@ public class UserOutput {
         }
 
         // Write key to keyTXT file
-        FileWriter keyWrite = new FileWriter("C:\\JavaTest\\keyTXT.txt");
+        FileWriter keyWrite = new FileWriter("C:\\JavaEncrypt\\keyTXT_" + timeStamp + ".txt");
         try{
             keyWrite.write(Arrays.toString(userEncryptKey));
             keyWrite.close();
