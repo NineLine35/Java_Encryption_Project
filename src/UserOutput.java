@@ -12,7 +12,7 @@ public class UserOutput {
     private String userEncryptOut;
     private int[] userEncryptKey;
 
-    // Variable to bring in Data object in order to timestamp output files
+    // Variable to bring in Date object in order to timestamp output files
     Date date = new Date();
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd.HH-mm");
     String timeStamp = dateFormat.format(date);

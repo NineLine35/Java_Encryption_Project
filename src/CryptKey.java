@@ -47,15 +47,6 @@ public class CryptKey {
                 letter = userWord[y]+ key[y];
                 cryptText[y] = (char) letter;
 
-                //Old code to be used to encrypt without extended ASCII
-           /*     if(userWord[y] + key[y] <= 127){
-                    letter = userWord[y]+ key[y];
-                    cryptText[y] = (char) letter;
-                }
-                else {
-                    letter = Math.round((userWord[y]+ key[y]) / 2);
-                    cryptText[y] = (char) letter;
-                }*/
 
             }
 
@@ -78,16 +69,6 @@ public class CryptKey {
                 letter = userWord[y] - key[y];
                 clearTxt[y] = (char) letter;
 
-                //Old code to be used to encrypt without extended ASCII
-                /*   if(((userWord[y] - key[y]) + userWord[y]) >= 127){
-                    letter = userWord[y] - key[y];
-                    clearTxt[y] = (char) letter;
-                }
-                else{
-
-                    letter = (userWord[y] - key[y]) + userWord[y];
-                    clearTxt[y] = (char) letter;
-                }*/
 
             }
 

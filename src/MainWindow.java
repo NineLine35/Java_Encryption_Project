@@ -20,14 +20,17 @@ public class MainWindow {
     private JTextArea userInputOutput;
     private JButton loadTxtButton;
     private JButton loadKeyButton;
-    private JButton button5;
+    private JButton closeButton;
     private JButton decryptButton;
 
     public MainWindow() {
         // Create a UserOutput object to store encrypted strings and keys
         UserOutput op = new UserOutput();
 
-        processButton.addActionListener(new ActionListener() {
+        // Set decrypt button to disabled a launch
+        decryptButton.setEnabled(false);
+
+        this.processButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -104,6 +107,10 @@ public class MainWindow {
                 // Disable load text and load key buttons (these are used only for decryption)
                 loadTxtButton.setEnabled(false);
                 loadKeyButton.setEnabled(false);
+                decryptButton.setEnabled(false);
+
+                saveButton.setEnabled(true);
+                processButton.setEnabled(true);
             }
         });
         decryptRadio.addActionListener(new ActionListener() {
@@ -123,14 +130,16 @@ public class MainWindow {
                 loadTxtButton.setEnabled(true);
                 loadKeyButton.setEnabled(true);
 
+                decryptButton.setEnabled(true);
                 saveButton.setEnabled(false);
+                processButton.setEnabled(false);
             }
         });
         loadTxtButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //Create a JFileChooser object
-                JFileChooser loadFile = new JFileChooser();
+                JFileChooser loadFile = new JFileChooser("C:\\");
                 // Set filter to only allow txt files to be loaded (can be expanded in the future)
                 FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text Files","txt");
                 // Set filter on FileChooser object
@@ -144,36 +153,47 @@ public class MainWindow {
                     //Variable to hold the file selected by the user
                     File selectedFile = loadFile.getSelectedFile();
 
-                    //Create a variable to hold the output from the text loading
-                    String encryptText = null;
+                    // Check to ensure that file loaded is an encrypted text file, and not an encrypted text file
+                    String correctPath = "encryptTXT";
 
-                    //Create a scanner object to read the file
-                    try {
-                        Scanner reader = new Scanner(selectedFile);
+                    if(selectedFile.toString().contains(correctPath))
+                    {
+                        //Create a variable to hold the output from the text loading
+                        String encryptText = null;
 
-                        // Read the text from the file into a variable
-                        while(reader.hasNextLine()){
-                            encryptText = reader.nextLine();
+                        //Create a scanner object to read the file
+                        try {
+                            Scanner reader = new Scanner(selectedFile);
+
+                            // Read the text from the file into a variable
+                            while(reader.hasNextLine()){
+                                encryptText = reader.nextLine();
+                            }
+
+                            reader.close();
+
+                        } catch (FileNotFoundException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(new JFrame(),
+                                    "Error reading file");
                         }
 
-                        reader.close();
+                        // Set UserOutput variable to encryptText value
+                        op.setUserEncryptOut(encryptText);
 
-                    } catch (FileNotFoundException ex) {
-                        ex.printStackTrace();
+                        // Write text onto JTextArea
+                        userInputOutput.setText(encryptText);
+
+
                         JOptionPane.showMessageDialog(new JFrame(),
-                                "Error reading file");
+                                "Load Successful");
+
                     }
-
-                    // Set UserOutput variable to encryptText value
-                    op.setUserEncryptOut(encryptText);
-
-                    // Write text onto JTextArea
-                    userInputOutput.setText(encryptText);
-
-
-                    JOptionPane.showMessageDialog(new JFrame(),
-                            "Load Successful");
-
+                    else
+                    {
+                        JOptionPane.showMessageDialog(new JFrame(),
+                                "Incorrect Text File");
+                    }
 
                 }
 
@@ -184,7 +204,7 @@ public class MainWindow {
             public void actionPerformed(ActionEvent e) {
 
                 //Create a JFileChooser object
-                JFileChooser loadFile = new JFileChooser();
+                JFileChooser loadFile = new JFileChooser("C:\\");
                 // Set filter to only allow txt files to be loaded (can be expanded in the future)
                 FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text Files","txt");
                 // Set filter on FileChooser object
@@ -199,48 +219,61 @@ public class MainWindow {
                     //Variable to hold the file selected by the user
                     File selectedFile = loadFile.getSelectedFile();
 
-                    // Create a string variable to hold the key string
-                    String encryptKey = null;
+                    // Check to ensure that file loaded is a key file, and not an encrypted text file
+                    String correctPath = "keyTXT";
 
-                    //TODO Need to bring file in as a string and pull the int out into an array
+                    if(selectedFile.toString().contains(correctPath))
+                    {
+                        // Create a string variable to hold the key string
+                        String encryptKey = null;
 
-                    try {
-                        Scanner reader = new Scanner(selectedFile);
 
-                        while(reader.hasNextLine()){
+                        // Read the selected text file
+                        try {
+                            Scanner reader = new Scanner(selectedFile);
 
-                            encryptKey = reader.nextLine();
+                            while(reader.hasNextLine()){
+
+                                encryptKey = reader.nextLine();
+                            }
+
+                            reader.close();
+
+                        } catch (FileNotFoundException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(new JFrame(),
+                                    "Error reading file");
                         }
 
-                        reader.close();
+                        // Code to remove the brackets from the key string and pull values from string array
+                        // to an int array.  This is required for the decrypt method.
 
-                    } catch (FileNotFoundException ex) {
-                        ex.printStackTrace();
+                        encryptKey = encryptKey.replaceAll("\\s","");
+
+
+                        String[] rmvBrackets = encryptKey.substring(1,encryptKey.length() -1).split(",");
+
+                        int[] finalKey = new int[rmvBrackets.length];
+
+                        for(int x=0; x < rmvBrackets.length; x++)
+                        {
+                            finalKey[x] = Integer.valueOf(rmvBrackets[x]);
+                        }
+
+                        // Set finalKey variable to encryptKey value
+                        op.setUserEncryptKey(finalKey);
+
+                        // Confirmation of successful load
                         JOptionPane.showMessageDialog(new JFrame(),
-                                "Error reading file");
+                                "Load Successful");
                     }
-
-                    // Code to remove the brackets from the key string and pull values from string array
-                    // to an int array.  This is required for the decrypt method.
-
-                    encryptKey = encryptKey.replaceAll("\\s","");
-
-
-                    String[] rmvBrackets = encryptKey.substring(1,encryptKey.length() -1).split(",");
-
-                    int[] finalKey = new int[rmvBrackets.length];
-
-                    for(int x=0; x < rmvBrackets.length; x++)
+                    else
                     {
-                        finalKey[x] = Integer.valueOf(rmvBrackets[x]);
+                        JOptionPane.showMessageDialog(new JFrame(),
+                                "Incorrect Key File");
                     }
 
-                    // Set finalKey variable to encryptKey value
-                    op.setUserEncryptKey(finalKey);
 
-                    // Confirmation of successful load
-                    JOptionPane.showMessageDialog(new JFrame(),
-                            "Load Successful");
 
 
                 }
@@ -262,13 +295,22 @@ public class MainWindow {
                 String output = unscramble.decrypt(encryptTxt,key);
 
                 userInputOutput.setText(output);
+                userInputOutput.setEnabled(true);
 
+            }
+        });
+
+        // Closes the program
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("MainWindow");
+        JFrame frame = new JFrame("Java Text Encryption");
         frame.setContentPane(new MainWindow().MainWindow);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
