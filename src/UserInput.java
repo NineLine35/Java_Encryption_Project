@@ -1,3 +1,4 @@
+// Class to hold all user input conversions
 public class UserInput {
 
     //Method to read a string, breakdown each char to ASCII and return a

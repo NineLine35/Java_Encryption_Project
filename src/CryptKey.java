@@ -44,16 +44,31 @@ public class CryptKey {
             for(int y =0; y <input.length(); y++){
                 int letter;
 
+
+                // Added the letter & key 0
+                if(userWord[y]+ key[y] > 126)
+                {
+                    letter = userWord[y];
+                    key[y] = 0;
+                }
+                else
+                {
+                    letter = userWord[y]+ key[y];
+                }
                 letter = userWord[y]+ key[y];
+
                 cryptText[y] = (char) letter;
 
 
             }
 
-            return encryptFinal = new String(cryptText);
+            String scrubText = new String(cryptText);
+
+            return encryptFinal = scrubText;
         }
 
 
+        // Method to decrypt the text and return the decrypted string
         public String decrypt(String text, int[] key){
 
             //Array to hold unencrypted text
@@ -66,7 +81,15 @@ public class CryptKey {
             for(int y = 0; y < text.length(); y++){
                 int letter;
 
-                letter = userWord[y] - key[y];
+                if(key[y] == 0)
+                {
+                    letter = userWord[y];
+                }
+                else
+                {
+                    letter = userWord[y] - key[y];
+                }
+
                 clearTxt[y] = (char) letter;
 
 

@@ -63,6 +63,7 @@
         </constraints>
         <properties>
           <lineWrap value="true"/>
+          <wrapStyleWord value="true"/>
         </properties>
       </component>
       <component id="1f2ef" class="javax.swing.JButton" binding="loadKeyButton">

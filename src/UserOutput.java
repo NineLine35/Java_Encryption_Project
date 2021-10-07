@@ -1,7 +1,6 @@
 import javax.swing.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,10 +34,15 @@ public class UserOutput {
         File keyTxt = new File("C:\\JavaEncrypt\\keyTXT_" + timeStamp + ".txt");
         keyTxt.createNewFile();
 
+        //Remove any left over spaces in text
+        String out = new String(userEncryptOut.replaceAll("\\s+", ""));
+
+
         //Write encrypted text to encryptTXT file
         FileWriter txtWrite = new FileWriter("C:\\JavaEncrypt\\encryptTXT_" + timeStamp +".txt");
         try{
-            txtWrite.write(userEncryptOut);
+
+            txtWrite.write(out);
             txtWrite.close();
             JOptionPane.showMessageDialog(new JFrame(),
                     "Text Save successful");
